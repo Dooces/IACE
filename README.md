@@ -117,3 +117,1009 @@ Volatile bandit × (yohimbine vs clonidine) at matched S: test NE×volatility ef
 Sleep arm: MB‑heavy vs MF‑heavy training; overnight EEG (SO–spindle–ripple vs striatal indices); next‑day schema transfer vs habit retention. Prediction: controller‑specific sleep dependence.
 Safe novelty statement (for abstracts/posts)
 We extend affordance/urgency and PBWM with an explicit physiological price signal. A latent metabolic surplus S gates graded model‑based engagement and sets a benefit‑per‑energy access criterion for internal simulation—yielding preregisterable signatures (ACh×SNR access interaction, energy‑ordered failure with an LC–NE reset, and controller‑specific sleep consolidation).
+
+1) Replace the homunculi with computable states
+1.1 Surplus S as an inferred allostatic state (no single “fuel gauge”)
+
+Define Ŝ_t as the posterior mean of a low-dimensional latent allostatic surplus state inferred from heterogeneous intero-/autonomic measurements with explicit time scales.
+
+Generative state-space model
+
+Latents (continuous-time, then discretized):
+
+𝑥
+(
+𝑡
+)
+=
+[
+𝐸
+fast
+
+
+𝐸
+mid
+
+
+𝐸
+slow
+
+
+𝑂
+2
+
+
+𝐶
+𝑂
+2
+
+
+𝐻
+sleep
+
+
+𝐻
+hydr
+]
+,
+𝑥
+˙
+=
+𝐴
+𝑥
++
+𝑢
+(
+𝑡
+)
++
+𝜂
+(
+𝑡
+)
+x(t)=
+	​
+
+E
+fast
+	​
+
+E
+mid
+	​
+
+E
+slow
+	​
+
+O
+2
+	​
+
+CO
+2
+	​
+
+H
+sleep
+	​
+
+H
+hydr
+	​
+
+	​
+
+	​
+
+,
+x
+˙
+=Ax+u(t)+η(t)
+
+where 
+𝐸
+fast
+E
+fast
+	​
+
+ (ATP/O2 minutes), 
+𝐸
+mid
+E
+mid
+	​
+
+ (glucose/glycogen tens of minutes–hours), 
+𝐸
+slow
+E
+slow
+	​
+
+ (fatigue/recovery hours–days), 
+𝐻
+sleep
+H
+sleep
+	​
+
+ (Process-S), etc.
+
+Sensors (noisy, partial, mismatched time scales):
+
+𝑦
+𝑡
+=
+[
+heart rate
+,
+ HRV
+,
+ pupil
+,
+ 
+end-tidal CO
+2
+,
+ 
+SpO
+2
+,
+ BG/glucose
+,
+ skin conductance
+,
+ fNIRS/fMRI BOLD proxies
+]
+=
+𝐶
+𝑥
+𝑡
++
+𝜖
+𝑡
+y
+t
+	​
+
+=[
+heart rate, HRV, pupil, end-tidal CO
+2
+	​
+
+, SpO
+2
+	​
+
+, BG/glucose, skin conductance, fNIRS/fMRI BOLD proxies
+	​
+
+]=Cx
+t
+	​
+
++ϵ
+t
+	​
+
+
+Ŝ_t = 
+𝑤
+⊤
+𝑥
+𝑡
+w
+⊤
+x
+t
+	​
+
+ with 
+𝑤
+≥
+0
+w≥0 learned (subject-specific) under the constraint that increasing Ŝ increases available cortical power (J/s) or reduces opportunity cost of time.
+
+Neuroanatomical mapping (hypothesis)
+
+Sensing/likelihoods: nucleus of the solitary tract (NTS), parabrachial nucleus, carotid body, vagal/visceral afferents.
+
+Inference/integration: posterior & anterior insula + vmPFC as interoceptive predictive coding hub; hypothalamus maintains slow drives (sleep, hydration, energy balance).
+
+Broadcast: vmPFC/insula → ACC/FPC; hypothalamus → LC/BF cholinergic nuclei for global gain coupling.
+
+This makes Ŝ an explicit inference problem (Kalman/variational filter), not a scalar oracle. If your Ŝ estimator fails to track behavior under perturbation, the theory fails (see §4).
+
+Update (discrete)
+
+𝑥
+^
+𝑡
+∣
+𝑡
+−
+1
+=
+𝐹
+𝑥
+^
+𝑡
+−
+1
++
+𝐵
+𝑢
+𝑡
+−
+1
+,
+𝐾
+𝑡
+=
+𝑃
+𝑡
+∣
+𝑡
+−
+1
+𝐶
+⊤
+(
+𝐶
+𝑃
+𝑡
+∣
+𝑡
+−
+1
+𝐶
+⊤
++
+𝑅
+)
+−
+1
+x
+^
+t∣t−1
+	​
+
+=F
+x
+^
+t−1
+	​
+
++Bu
+t−1
+	​
+
+,K
+t
+	​
+
+=P
+t∣t−1
+	​
+
+C
+⊤
+(CP
+t∣t−1
+	​
+
+C
+⊤
++R)
+−1
+𝑥
+^
+𝑡
+=
+𝑥
+^
+𝑡
+∣
+𝑡
+−
+1
++
+𝐾
+𝑡
+(
+𝑦
+𝑡
+−
+𝐶
+𝑥
+^
+𝑡
+∣
+𝑡
+−
+1
+)
+,
+𝑆
+^
+𝑡
+=
+softplus
+(
+𝑤
+⊤
+𝑥
+^
+𝑡
++
+𝑏
+)
+x
+^
+t
+	​
+
+=
+x
+^
+t∣t−1
+	​
+
++K
+t
+	​
+
+(y
+t
+	​
+
+−C
+x
+^
+t∣t−1
+	​
+
+),
+S
+^
+t
+	​
+
+=softplus(w
+⊤
+x
+^
+t
+	​
+
++b)
+1.2 Threshold θ as a circuit-level gating bound
+
+θ is not a mystical scalar; it’s a decision/policy gating bound implemented by converging inhibitory control over thalamo-cortical ignition and BG “gate open” events.
+
+Mechanistic decomposition
+
+𝜃
+𝑡
+=
+𝜃
+0
++
+𝑘
+TRN
+ 
+𝑔
+TRN
+(
+𝑡
+)
+⏟
+thalamic gate
++
+𝑘
+STN
+ 
+𝑟
+STN
+(
+𝑡
+)
+⏟
+hyperdirect brake
+−
+𝑘
+𝐷
+1
+ 
+𝑎
+𝐷
+1
+(
+𝑡
+)
+⏟
+go bias
++
+𝑘
+𝐷
+2
+ 
+𝑎
+𝐷
+2
+(
+𝑡
+)
+⏟
+no-go bias
++
+𝑘
+FPC
+ 
+𝑏
+FPC
+(
+𝑡
+)
+⏟
+alternative model availability
+θ
+t
+	​
+
+=θ
+0
+	​
+
++
+thalamic gate
+k
+TRN
+	​
+
+g
+TRN
+	​
+
+(t)
+	​
+
+	​
+
++
+hyperdirect brake
+k
+STN
+	​
+
+r
+STN
+	​
+
+(t)
+	​
+
+	​
+
+−
+go bias
+k
+D1
+	​
+
+a
+D1
+	​
+
+(t)
+	​
+
+	​
+
++
+no-go bias
+k
+D2
+	​
+
+a
+D2
+	​
+
+(t)
+	​
+
+	​
+
++
+alternative model availability
+k
+FPC
+	​
+
+b
+FPC
+	​
+
+(t)
+	​
+
+	​
+
+
+TRN (thalamic reticular nucleus) inhibitory gain sets broadcast gate.
+
+STN (hyperdirect) sets “hold your horses” bound (action & WM gating).
+
+Striatal D1/D2 bias the gate.
+
+Frontopolar cortex (FPC) raises the bound when multiple counterfactual task-sets are live (prevents premature commitment).
+
+Neuromodulator entry is receptor- and target-specific (next section), i.e., they shift 
+𝑔
+TRN
+g
+TRN
+	​
+
+, 
+𝑟
+STN
+r
+STN
+	​
+
+, 
+𝑎
+𝐷
+1
+/
+𝐷
+2
+a
+D1/D2
+	​
+
+, not θ abstractly.
+
+2) From “one loop” to competing controllers + market-style arbitration
+
+Replace single ACC-BG arbitration with parallel bids from:
+
+Habitual MF (DLS), goal-directed MB (DMS + PFC/hippocampus), Pavlovian (amygdala/brainstem), Interoceptive safety/homeostasis (insula/hypothalamus), and Frontopolar exploration (FPC).
+
+Auction/gate in BG-thalamo-cortical loops implements leaky-WTA:
+
+𝑧
+˙
+𝑖
+=
+𝛽
+𝑖
+(
+𝑆
+^
+)
+ 
+𝑈
+𝑖
+−
+𝜆
+𝑧
+𝑖
+−
+∑
+𝑗
+≠
+𝑖
+𝛾
+𝑖
+𝑗
+𝑧
+𝑗
++
+𝜉
+𝑖
+z
+˙
+i
+	​
+
+=β
+i
+	​
+
+(
+S
+^
+)U
+i
+	​
+
+−λz
+i
+	​
+
+−
+j
+
+=i
+∑
+	​
+
+γ
+ij
+	​
+
+z
+j
+	​
+
++ξ
+i
+	​
+
+
+with 
+𝑈
+𝑖
+U
+i
+	​
+
+ = expected free-energy reduction per unit time/energy for controller i. Gate opens for argmax 
+𝑧
+𝑖
+z
+i
+	​
+
+ when 
+𝑧
+𝑖
+z
+i
+	​
+
+ crosses θ (TRN/BG bound). This naturally yields oscillatory control under conflict (e.g., all-nighter).
+
+ACC’s role becomes computing opportunity cost / meta-loss and routing error, not a serene monarch.
+
+3) Neuromodulators: interaction matrix, not four knobs
+
+Map each transmitter to targets × receptor classes × timescale with signed effects (↑/↓). Examples (non-exhaustive, task-relevant):
+
+Tx	Receptor	Target	Net effect (hypothesized)
+NE (LC)	α1/β	TRN ↓, PFC gain ↑ (stochastic resonance), FPC exploration ↑	Lowers effective bound at moderate levels; high NE → reset/instability (inverted-U)
+NE (LC)	α2	PFC recurrent inhibition ↑ (stabilize)	Raises bound late in fatigue to prevent noise-driven flailing
+ACh (basal forebrain)	Nicotinic (nAChR)	Thalamus/PFC input gain ↑, hippocampal encoding ↑	Lowers bound for admitting new evidence (exploration)
+ACh	Muscarinic (M1/M2)	Cortical recurrent stabilization ↑, TRN facilitation ↑	Raises bound to protect high exogenous precision / REM pattern completion
+DA (VTA/SNc)	D1 (direct)	Striatal “go”, policy precision ↑, opportunity cost of time ↑	Lowers effective deliberation time → functionally raises MB admission bound if time is costly
+DA	D2 (indirect)	“No-go”, exploration via uncertainty bonuses ↓	Increases bound for risky switches
+5-HT (raphe)	5-HT1A/2A…	Discounting ↓ (patience ↑), confidence threshold for switching ↑	Raises bound on task-switch; extends planning horizon
+
+These are not orthogonal; interactions (NE↔DA in PFC, ACh gating TRN that sets thalamic relay, etc.) appear explicitly via the targets they modulate.
+
+4) Make it falsifiable: pre-registered measurement & perturbation plan
+
+Operational readouts
+
+Ŝ_t: fit the state-space model on multi-sensor data (pupil, ETCO₂, SpO₂, HR/HRV, glucose, EEG slow-wave pressure), cross-validated against cortical metabolic proxy (fNIRS/fMRI BOLD power in task-positive network).
+
+θ_t: estimate from drift-diffusion fits of WM-update gate & action gate plus EEG/MEG TRN-like inhibition indices and STN beta power (proxy for brake).
+
+Key perturbations & predictions (directional, risky)
+
+Brief hypoxia (safe ETCO₂ manipulation) lowers O₂ latent → Ŝ↓ within tens of seconds → reduced MB weight on the two-step task after controlling for arousal; recovery abolishes effect. Failure ⇒ Ŝ mis-specified.
+
+Insula disruption (TMS) reduces interoceptive likelihood precision → Ŝ becomes noisier (higher posterior variance) → more LC-NE resets and less stable MB engagement at matched mean Ŝ. No change ⇒ insula not necessary for Ŝ.
+
+Nicotinic vs muscarinic cholinergic challenge: nicotine lowers bound (more admission of new evidence), scopolamine (M) raises bound (stabilizes, fewer switches) under high exogenous precision. Same-direction effects ⇒ reject receptor-specific mapping.
+
+STN-DBS in PD (ON vs OFF) primarily reduces action bound (faster commits) but does not systematically increase MB admission to global broadcast. If MB admission increases robustly with DBS, θ was mis-localized to STN rather than TRN/BF circuits.
+
+Tonic DA manipulation that increases opportunity cost (d-amphetamine, low dose) should shorten deliberation and decrease MB use under tight deadlines even when Ŝ is high. Opposite result ⇒ revise DA→time-cost coupling.
+
+Sleep pressure (Process-S) elevation: with identical task errors, gMB falls before executive control fails, reproducing the degradation order; if executive control fails first, the pricing is wrong.
+
+Ketone infusion (raising cellular energetics without glucose rise) selectively increases MB engagement if Ŝ tracks true energetic availability, not just glucose. Null effect ⇒ Ŝ is just a glucose proxy.
+
+Pre-register models, sensors, manipulations, and the exact hierarchical Bayesian fitting (priors on A, C, R, and coupling gains). If the pre-registered mapping fails across ≥2 perturbations, the account is falsified, not “saved” by post-hoc reweighing.
+
+5) Plug into your UPCA/AMC as an implementable graph
+
+Controller bids
+
+𝑈
+𝑖
+=
+𝐸
+[
+Δ
+F
+E
+𝑖
+]
+t
+i
+m
+e
+_
+c
+o
+s
+t
+𝑖
+(
+DA
+)
+⏟
+∝
+1
+/
+patience(5-HT)
++
+e
+n
+e
+r
+g
+y
+_
+c
+o
+s
+t
+𝑖
+(
+𝑆
+^
+)
+⏟
+↓
+with higher 
+𝑆
+^
+U
+i
+	​
+
+=
+∝1/patience(5-HT)
+time_cost
+i
+	​
+
+(DA)
+	​
+
+	​
+
++
+↓with higher 
+S
+^
+energy_cost
+i
+	​
+
+(
+S
+^
+)
+	​
+
+	​
+
+E[ΔFE
+i
+	​
+
+]
+	​
+
+
+Gate dynamics
+
+𝑔
+MB
+=
+𝜎
+(
+𝛼
+ 
+𝜀
+res
++
+𝛽
+ 
+𝑆
+^
+−
+𝜃
+𝑡
+)
+,
+𝜃
+𝑡
+=
+𝜃
+(
+TRN, STN, D1/D2, FPC
+;
+NE, ACh
+N/M
+,
+DA
+,
+5-HT
+)
+g
+MB
+	​
+
+=σ(αε
+res
+	​
+
++β
+S
+^
+−θ
+t
+	​
+
+),θ
+t
+	​
+
+=θ(TRN, STN, D1/D2, FPC;NE, ACh
+N/M
+	​
+
+,DA,5-HT)
+
+Plasticity
+
+Δ
+𝑤
+∝
+Hebb
+×
+𝑔
+ctrl
+⏟
+actual controller weight
+×
+p
+r
+e
+c
+i
+s
+i
+o
+n
+-
+w
+e
+i
+g
+h
+t
+e
+d
+ 
+s
+u
+r
+p
+r
+i
+s
+e
+⏟
+prediction error
+/
+Σ
+×
+salience
+−
+downscale
+Δw∝Hebb×
+actual controller weight
+g
+ctrl
+	​
+
+	​
+
+	​
+
+×
+prediction error/Σ
+precision-weighted surprise
+	​
+
+	​
+
+×salience−downscale
+
+with sleep-phase: ACh_M high → protect recurrent patterns (stabilize), nAChR/NE low → allow pruning; hippocampal replay increases credit assignment to MB-used traces.
+
+Minimal pseudocode (runtime)
+
+# infer surplus
+x_pred = F @ x + B @ u
+K = P @ C.T @ np.linalg.inv(C @ P @ C.T + R)
+x = x_pred + K @ (y - C @ x_pred)
+S_hat = softplus(w @ x + b)
+
+# neuromodulated bound components (targets, not abstract)
+theta = (theta0
+         + k_TRN * TRN_gain(NE_alpha1beta, ACh_M)
+         + k_STN * STN_brake()
+         - k_D1  * striatum_D1(DA)
+         + k_D2  * striatum_D2(DA)
+         + k_FPC * FPC_alt_models())
+
+# controller bids (MB, MF, Pavlovian, Homeostatic)
+U = {i: E_dF[i] / (time_cost(i, DA, 5HT) + energy_cost(i, S_hat)) for i in controllers}
+z = leak_WTA(z, U, coupling_matrix)
+winner, z = gate_crosses(theta, z)
+
+# plasticity
+for syn in active_synapses[winner]:
+    syn.w += lr * Hebb(syn) * precision_weighted_surprise * salience - downscale
+
+6) Address the “predicting the obvious” concern with counter-intuitive predictions
+
+Nicotinic ACh challenge improves MB gating even when sensory precision is already high, whereas muscarinic challenge does the opposite—despite both being “ACh”. If both push in the same direction, the receptor-specific account is wrong.
+
+Raising opportunity cost (DA/urgency) can reduce MB despite higher Ŝ—i.e., more energy but less deliberation: time, not energy, is the binding constraint.
+
+Hyper-accurate exteroceptive precision (e.g., crisp vision via adaptive optics) paradoxically reduces MB, because ACh_M-driven stabilization raises θ to protect the current model—unless nAChR is selectively engaged.
+
+Bottom line:
+
+Ŝ becomes a fit-and-test latent from a physiologically grounded state-space model (insula/vmPFC/hypothalamus), not a fudge factor.
+
+θ unpacks into identifiable circuit bounds (TRN, STN, striatum, FPC) under receptor-specific neuromodulation.
+
+Arbitration is a market of competing loops, not a single executive.
+
+The package is implementable (equations + pseudocode) and falsifiable (pre-registered perturbations with directional predictions).
+
+If you want, I can drop this into your UPCA v4.1 AMC as a concrete module: (i) Ŝ filter class with learnable C,R; (ii) θ aggregator pinned to measurable proxies (TRN/EEG spindle power, STN beta, pupil/NE); (iii) a controller-auction gate; (iv) sleep-phase scheduler for consolidation/pruning.
+
+You said:
+is this supporting IACE or UPCA, or both? as they should bemostly the same
+ChatGPT said:
+
+This supports both IACE and UPCA, because the two are essentially the same architecture framed at different levels of abstraction:
+
+IACE framing (your earlier description):
+
+Speculative engine (MA) vs cheap automatic pathways (APs).
+
+A subconscious allocator (SC) that decides when to escalate from MF/AP to MB/MA.
+
+Surplus = “energy availability,” threshold = “gate to global broadcast.”
+
+UPCA framing (v4.1):
+
+Meta-cognitive arbiter (AMC) balancing MF (Systemic Info / habits) and MB (Planning / MA).
+
+p^{desired}(a_t) and free-energy style arbitration with explicit cost-sensitive gating.
+
+Surplus Ŝ and θ implemented as latent inference + gating bounds.
+
+The changes I laid out—replacing S with a computable allostatic state estimate, and θ with circuit-level gating variables (TRN, STN, striatum, FPC, receptor-specific neuromodulation)—slot cleanly into either architecture:
+
+In IACE terms: SC no longer relies on a “magical surplus” and “arbitrary threshold,” but on explicit interoceptive filters and neural gating circuits.
+
+In UPCA terms: AMC has a concrete computational graph (state-space filter for Ŝ, gate bound θ_t as weighted neural signals, arbitration as leaky-WTA auction).
+
+So the update bridges them: IACE and UPCA are two phrasings of the same control principle, and this specification provides the mechanistic core they both need.
